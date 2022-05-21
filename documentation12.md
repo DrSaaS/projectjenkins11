@@ -70,4 +70,8 @@ Chmod -R 777 home caused problems. Unable to SSH into instance after that.
 ### Still didn't work
 ### remove the , from ansible in jenkins
 
-
+Eventually we used
+```
+sudo chmod -R 0777 /home/ubuntu/ansible-config-artifact
+sudo chmod 0775 /home/ubuntu/
+```
