@@ -6,6 +6,13 @@ Project 12
 ### I SSH'd into the Jenkins-Ansible-Server to create a directory named ansible-config-artifact
 
 ```
+
+sudo chown root:root /home
+sudo chmod 755 /home
+sudo chown ubuntu:ubuntu /home/ubuntu -R
+$ sudo chmod 700 /home/ubuntu /home/ubuntu/.ssh
+$ sudo chmod 600 /home/ubuntu/.ssh/authorized_keys
+
 sudo mkdir /home/ubuntu/ansible-config-artifact
 
 sudo chmod -R 0777 /home/ubuntu/ansible-config-artifact
