@@ -60,3 +60,6 @@ ll
 ![copy artifacts](./images/artifacts-1.JPG) 
 
 ![copy artifacts](./images/artifacts-2.JPG) 
+
+Chmod -R 777 home caused problems. Unable to SSH into instance after that.
+
