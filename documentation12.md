@@ -62,4 +62,6 @@ ll
 ![copy artifacts](./images/artifacts-2.JPG) 
 
 Chmod -R 777 home caused problems. Unable to SSH into instance after that.
+### I changed the owner of the artifacts file to ubuntu and tried again
+
 
