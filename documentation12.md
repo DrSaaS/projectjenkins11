@@ -63,5 +63,7 @@ ll
 
 Chmod -R 777 home caused problems. Unable to SSH into instance after that.
 ### I changed the owner of the artifacts file to ubuntu and tried again
+### Still didn't work
+### Deleted and created the directory again with chmod 777
 
 
