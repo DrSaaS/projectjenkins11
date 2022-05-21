@@ -67,5 +67,7 @@ Chmod -R 777 home caused problems. Unable to SSH into instance after that.
 ### Deleted and created the directory again with chmod 777
 ### Still didn't work
 ### Added a slash after the full path  /home/ubuntu/ansible-config-artifact/
+### Still didn't work
+### remove the , from ansible in jenkins
 
 
