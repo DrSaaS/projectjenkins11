@@ -1,0 +1,29 @@
+
+Bastion Public IP: 3.10.213.95
+
+
+Bastion private IP:  172.31.32.152
+
+Bastion public DNS: ec2-3-10-213-95.eu-west-2.compute.amazonaws.com
+
+Bastion connection string: ssh -i "newkey.pem" ubuntu@ec2-3-10-213-95.eu-west-2.compute.amazonaws.com
+
+Bastion User: ubuntu
+
+Bastion SSH: ubuntu@3.10.213.95      (public key used)
+
+
+
+
+Worker Public IP: 13.40.191.30
+
+Worker Private IP:  172.31.47.79
+
+Worker public DNS: ec2-13-40-191-30.eu-west-2.compute.amazonaws.com
+
+Worker Connection string: ssh -i "newkey.pem" ubuntu@ec2-13-40-191-30.eu-west-2.compute.amazonaws.com
+
+Worker User: ubuntu
+
+worker SSH: ubuntu@172.31.47.79  private key used
+
