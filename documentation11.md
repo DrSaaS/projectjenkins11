@@ -355,8 +355,5 @@ ansible-playbook -i  /var/lib/jenkins/jobs/ansible/builds/10/archive/inventory/d
 # End of Project 11. 12 will be on the same github repository
 ---
 
-![webserver1](./images/playbook-file-created.JPG)
-![webserver1](./images/playbook-file-created.JPG)
-
 
 
