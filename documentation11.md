@@ -356,3 +356,7 @@ ansible-playbook -i  /var/lib/jenkins/jobs/ansible/builds/10/archive/inventory/d
 ---
 
 ![webserver1](./images/playbook-file-created.JPG)
+![webserver1](./images/playbook-file-created.JPG)
+
+
+
