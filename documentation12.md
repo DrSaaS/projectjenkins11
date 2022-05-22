@@ -142,20 +142,64 @@ touch static-assignments/common-del.yml
 
 ## The next task is to configure 2 UAT webservers with a role 'WEBSERVER'
 ###  I launched 2 fresh EC2 instances using RHEL 8 image,and named them Web1-UAT and Web2-UAT.
+![Wireshark Deleted](./images/uat-servers.JPG)  
+
 ### I then created the roles directory in the root and the created the webserver file structure in the roles directory manually .  
 
 ![Webserver role Directory Structure](./images/directory-structure.JPG)  
 
 ### I proceeded to update the inventory ansible-config-artifact/inventory/uat.yml file with IP addresses of the 2 UAT Web servers
 
-### There wasn't an /etc/asnsible or /etc/ansible/ansible.cfg
-### I created /etc/ansible/ansible.cfg file and inserted the variable and path 
-### roles_path    = /home/ubuntu/ansible-config-artifact/roles 
+![Webserver role Directory Structure](./images/uatyml.JPG)
 
 
 ### Next, I went into tasks directory, and within the main.yml file and posted the instructions to do the following
-###
+
+### In /etc/ansible/ansible.cfg file, I uncommented roles_path string and provided the full path to the roles directory roles_path    = /home/ubuntu/ansible-config-artifact/roles, so Ansible could know where to find configured roles.
+
+![Roles Path](./images/rolepath.JPG)
+
+
+###  Next, I configured tasks/main.yml to do the following
 - Install and configure Apache (httpd service)
-- Clone Tooling website from GitHub https://github.com/<your-name>/tooling.git.
+- Clone Tooling website from GitHub https://github.com/darey-io/tooling.git.
 - Ensure the tooling website code is deployed to /var/www/html on each of 2 UAT Web servers.
 - Make sure httpd service is started
+
+```
+---
+- name: install apache
+  become: true
+  ansible.builtin.yum:
+    name: "httpd"
+    state: present
+
+- name: install git
+  become: true
+  ansible.builtin.yum:
+    name: "git"
+    state: present
+
+- name: clone a repo
+  become: true
+  ansible.builtin.git:
+    repo: https://github.com/darey-io/tooling.git
+    dest: /var/www/html
+    force: yes
+
+- name: copy html content to one level up
+  become: true
+  command: cp -r /var/www/html/html/ /var/www/
+
+- name: Start service httpd, if not started
+  become: true
+  ansible.builtin.service:
+    name: httpd
+    state: started
+
+- name: recursively remove /var/www/html/html/ directory
+  become: true
+  ansible.builtin.file:
+    path: /var/www/html/html
+    state: absent
+```
