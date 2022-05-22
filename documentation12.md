@@ -75,3 +75,64 @@ Eventually we used
 sudo chmod -R 0777 /home/ubuntu/ansible-config-artifact
 sudo chmod 0775 /home/ubuntu/
 ```
+### I created a new branch refactor
+```
+git checkout -b refactor
+```
+### I created a file site.yml in the plybooks directory
+
+```
+touch playbooks/site.yml
+```
+#### I created a directory static-assignments in the root
+```
+mkdir static-assignments
+```
+### I moved common.yml file into the newly created static-assignments folder
+```
+mv playbooks/common.yml static-assignments/
+```
+### Inside site.yml file, import common.yml playbook.
+```
+---
+- hosts: all
+- import_playbook: ../static-assignments/common.yml
+```
+
+### Next stepwas to create common-del.yml in ststic-assignments to delete wireshark
+
+```
+touch static-assignments/common-del.yml
+```
+
+### Common-del.yml is where I will configure the deletion of wireshark utility.
+
+```
+
+---
+- name: update web, nfs and db servers
+  hosts: webservers, nfs
+  remote_user: ec2-user
+  become: yes
+  become_user: root
+  tasks:
+  - name: delete wireshark
+    yum:
+      name: wireshark
+      state: removed
+
+- name: update LB server
+  hosts: lb,db
+  remote_user: ubuntu
+  become: yes
+  become_user: root
+  tasks:
+  - name: delete wireshark
+    apt:
+      name: wireshark-qt
+      state: absent
+      autoremove: yes
+      purge: yes
+      autoclean: yes
+
+```
