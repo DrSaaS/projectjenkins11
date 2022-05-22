@@ -136,3 +136,26 @@ touch static-assignments/common-del.yml
       autoclean: yes
 
 ```
+
+### Wireshark successfully deleted
+![Wireshark Deleted](./images/wireshark-deleted.JPG)
+
+## The next task is to configure 2 UAT webservers with a role 'WEBSERVER'
+###  I launched 2 fresh EC2 instances using RHEL 8 image,and named them Web1-UAT and Web2-UAT.
+### I then created the roles directory in the root and the created the webserver file structure in the roles directory manually .  
+
+![Webserver role Directory Structure](./images/directory-structure.JPG)  
+
+### I proceeded to update the inventory ansible-config-artifact/inventory/uat.yml file with IP addresses of the 2 UAT Web servers
+
+### There wasn't an /etc/asnsible or /etc/ansible/ansible.cfg
+### I created /etc/ansible/ansible.cfg file and inserted the variable and path 
+### roles_path    = /home/ubuntu/ansible-config-artifact/roles 
+
+
+### Next, I went into tasks directory, and within the main.yml file and posted the instructions to do the following
+###
+- Install and configure Apache (httpd service)
+- Clone Tooling website from GitHub https://github.com/<your-name>/tooling.git.
+- Ensure the tooling website code is deployed to /var/www/html on each of 2 UAT Web servers.
+- Make sure httpd service is started
