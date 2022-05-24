@@ -55,26 +55,17 @@ ll
 
 ![copy artifacts](./images/artifacts-error.JPG)
 
-### I did a chmod -R 777 against /home
 
-![copy artifacts](./images/artifacts-1.JPG) 
 
-![copy artifacts](./images/artifacts-2.JPG) 
-
-Chmod -R 777 home caused problems. Unable to SSH into instance after that.
-### I changed the owner of the artifacts file to ubuntu and tried again
-### Still didn't work
-### Deleted and created the directory again with chmod 777
-### Still didn't work
-### Added a slash after the full path  /home/ubuntu/ansible-config-artifact/
-### Still didn't work
-### remove the , from ansible in jenkins
-
-Eventually we used
+Eventually I changed the permissions as below after which the Jenkins build was successful
 ```
 sudo chmod -R 0777 /home/ubuntu/ansible-config-artifact
 sudo chmod 0775 /home/ubuntu/
 ```
+
+![copy artifacts](./images/jenkins-build.JPG)  
+
+
 ### I created a new branch refactor
 ```
 git checkout -b refactor
@@ -140,7 +131,7 @@ touch static-assignments/common-del.yml
 ### Wireshark successfully deleted
 ![Wireshark Deleted](./images/wireshark-deleted.JPG)
 
-## The next task is to configure 2 UAT webservers with a role 'WEBSERVER'
+## The next task was to configure 2 UAT webservers with a role 'WEBSERVER'
 ###  I launched 2 fresh EC2 instances using RHEL 8 image,and named them Web1-UAT and Web2-UAT.
 ![Wireshark Deleted](./images/uat-servers.JPG)  
 
@@ -203,3 +194,62 @@ touch static-assignments/common-del.yml
     path: /var/www/html/html
     state: absent
 ```
+
+### Now the next step was to reference the webserver role
+
+### In the static-assignments folder, I created a ne wassignment for uat-webservers named uat-webservers.yml
+
+```
+---
+- hosts: uat-webservers
+  roles:
+     - webserver
+```
+
+I then referred to the uat-webserver.yml in site.yml by importing it
+
+I pasted the following code in site.yml
+
+```
+---
+- hosts: all
+- import_playbook: ../static-assignments/common.yml
+
+- hosts: uat-webservers
+- import_playbook: ../static-assignments/uat-webservers.yml
+```
+
+### I commited, pushed to git and merged
+
+### The webhook was successfully triggered
+
+### I ran the playbook against the uat inventory
+```
+ansible-playbook -i /home/ubuntu/ansible-config-artifact/inventory/uat.yml /home/ubuntu/ansible-config-artifact/playbooks/site.yml
+```
+
+###  The playbook ran successfully  
+
+
+![Webpage Loaded](./images/uatplaybook.JPG)
+
+### Successfully tested the webpages in the browser  
+
+
+![Webpage Loaded](./images/webpageloaded.JPG)
+
+---
+# End of project
+---
+
+
+
+
+
+
+
+
+
+
+
+
