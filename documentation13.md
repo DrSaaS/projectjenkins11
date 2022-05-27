@@ -167,6 +167,8 @@ ansible-galaxy install geerlingguy.apache
 mv geerlingguy.apache/ apache
 ```
 
+### Next was to configure the Nginx role  - nginx>default>main.yml
+
 
 
 
