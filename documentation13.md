@@ -115,9 +115,15 @@ Username: my_username
 Password: my_token
 
 ### The next
-Inside roles directory create your new MySQL role with ansible-galaxy install geerlingguy.mysql and rename the folder to mysql
+Inside roles directory create your new MySQL role with 
+```
+ansible-galaxy install geerlingguy.mysql
+```
+ and rename the folder to mysql
 
+```
 mv geerlingguy.mysql/ mysql
+```
 Read README.md file, and edit roles configuration to use correct credentials for MySQL required for the tooling website.
 
 Now it is time to upload the changes into your GitHub:
@@ -145,10 +151,21 @@ mysql_users:
 ```
 
 
+### Load Balancer Roles
+### Install Nginx role
+
+```
+ansible-galaxy install geerlingguy.nginx
+
+mv geerlingguy.nginx/ nginx
+```
 
 
+```
+ansible-galaxy install geerlingguy.apache
 
-
+mv geerlingguy.apache/ apache
+```
 
 
 
