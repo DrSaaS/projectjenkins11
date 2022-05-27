@@ -168,14 +168,75 @@ mv geerlingguy.apache/ apache
 ```
 
 ### Next was to configure the Nginx role  - nginx>default>main.yml
+### First i edited the inventory>uat.yml file
+
+```
+
+[nfs]
+172.31.29.13
+
+[webservers]
+172.31.26.192 
+172.31.26.64 
+
+[db]
+172.31.20.208
+
+[lb]
+172.31.30.113
 
 
+```
+
+### I made changes to nginx > default > main.yml
+
+```
+nginx_upstreams: 
+- name: myapp1
+  strategy: "ip_hash" # "least_conn", etc.
+  keepalive: 16 # optional
+  servers:
+    - "172.31.26.192 weight=3"
+    - "172.31.26.64 weight=3"
+```
+
+```
+nginx_extra_http_options: 
+Example extra http options, printed inside the main server http config:
+   nginx_extra_http_options: |
+     proxy_buffering    off;
+     proxy_set_header   X-Real-IP $remote_addr;
+     proxy_set_header   X-Scheme $scheme;
+     proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+     proxy_set_header   Host $http_host;
+
+```
 
 
+### In nginx > tasks > main.yml, add become:true for #Nginx setup
+
+```
+# Nginx setup.
+- name: Copy nginx configuration in place.
+  become: true
+  template:
+    src: "{{ nginx_conf_template }}"
+    dest: "{{ nginx_conf_file_path }}"
+    owner: root
+    group: "{{ root_group }}"
+    mode: 0644
+  notify:
+    - reload nginx
+
+- name: Ensure nginx service is running as configured.
+  become: true
+  service:
+    name: nginx
+    state: "{{ nginx_service_state }}"
+    enabled: "{{ nginx_service_enabled }}"
 
 
-
-
+```
 
 
 
