@@ -115,6 +115,34 @@ Username: my_username
 Password: my_token
 
 ### The next
+Inside roles directory create your new MySQL role with ansible-galaxy install geerlingguy.mysql and rename the folder to mysql
+
+mv geerlingguy.mysql/ mysql
+Read README.md file, and edit roles configuration to use correct credentials for MySQL required for the tooling website.
+
+Now it is time to upload the changes into your GitHub:
+
+git add .
+git commit -m "Commit new role files into GitHub"
+git push --set-upstream origin roles-feature
+
+### I edited mysql?defaults>main.yml file
+```
+# Databases.
+mysql_databases:
+  - name: tooling
+    collation: utf8_general_ci
+    encoding: utf8
+    replicate: 1
+
+# Users.
+mysql_users: 
+  - name: webaccess
+    host: 0.0.0.0
+    password: secret
+    priv: '*.*:ALL,GRANT'
+
+```
 
 
 
