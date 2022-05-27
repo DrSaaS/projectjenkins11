@@ -85,10 +85,11 @@ git switch roles-feature
 ansible-galaxy install geerlingguy.mysql
 
 mv geerlingguy.mysql/ mysql
+```
 
 Read README.md file, and edit roles configuration to use correct credentials for MySQL required for the tooling website.
 
-Now it is time to upload the changes into your GitHub:
+Now it is time to upload the changes to GitHub:
 ```
 git add .
 git commit -m "Commit new role files into GitHub"
@@ -113,6 +114,7 @@ git push --set-upstream origin roles-feature
 Username: my_username
 Password: my_token
 
+### The next
 
 
 
