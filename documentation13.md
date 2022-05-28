@@ -410,4 +410,18 @@ Update both assignment and site.yml files respectively
   when: load_balancer_is_required 
 ```
 
+### We post the snippet below into env-vars/uat.yml
+### This will be used to control the loadbalancers
 
+```
+enable_nginx_lb: true
+load_balancer_is_required: true
+
+```
+
+
+### Next task is to run the playbook
+```
+ansible-playbook -i /inventory/uat.yml /playbooks/site.yml
+
+```
