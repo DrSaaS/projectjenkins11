@@ -1,5 +1,5 @@
 ### INTRODUCING DYNAMIC ASSIGNMENT  
-In my projectjenkins11 github repository, I started a new branch named dynamic-assignments
+In my github repository, I started a new branch named dynamic-assignments
 
 ```
 git checkout -b dynamic-assignments
@@ -18,7 +18,7 @@ mkdir dynamic-assignments && touch dynamic-assignments/env-vars.yml
 mkdir env-vars && touch env-vars/dev.yml env-vars/stage.yml env-vars/uat.yml env-vars/prod.yml
 ```  
 
-### I posted the following code into env-vars.yaml
+### I posted the following code snippet into env-vars.yaml
 
 ```
 ---
@@ -74,7 +74,7 @@ which git
 ```
 git init
 git pull https://github.com/DrSaas/projectjenkins11.git
-git remote add origin https://github.com/DrSaas/projwctjenkins11.git
+git remote add origin https://github.com/DrSaas/projectjenkins11.git
 git branch roles-feature
 git switch roles-feature
 ```
@@ -87,9 +87,7 @@ ansible-galaxy install geerlingguy.mysql
 mv geerlingguy.mysql/ mysql
 ```
 
-Read README.md file, and edit roles configuration to use correct credentials for MySQL required for the tooling website.
-
-Now it is time to upload the changes to GitHub:
+I commited and pushed the changes to GitHub:
 ```
 git add .
 git commit -m "Commit new role files into GitHub"
@@ -105,34 +103,17 @@ git push --set-upstream origin roles-feature
     - Personal access tokens
        -Generate new token
           - I gave a descriptive name
-          -set expiration to 90 days
-          -selected the scope (repo, admin:repo_hook, delete_repo)  
+          - set expiration to 90 days
+          - selected the scope (repo, admin:repo_hook, delete_repo)  
 
 - I generated the token and used it as a password.
 - I was able to push successfully.
 
-Username: my_username
+Username: drsaas
 Password: my_token
 
-### The next
-Inside roles directory create your new MySQL role with 
-```
-ansible-galaxy install geerlingguy.mysql
-```
- and rename the folder to mysql
 
-```
-mv geerlingguy.mysql/ mysql
-```
-Read README.md file, and edit roles configuration to use correct credentials for MySQL required for the tooling website.
-
-Now it is time to upload the changes into your GitHub:
-
-git add .
-git commit -m "Commit new role files into GitHub"
-git push --set-upstream origin roles-feature
-
-### I edited mysql?defaults>main.yml file
+### I edited mysql > defaults > main.yml file
 ```
 # Databases.
 mysql_databases:
@@ -151,7 +132,7 @@ mysql_users:
 ```
 
 
-### Load Balancer Roles
+### Load Balancer Roles _ Next i created the Nginx role
 ### Install Nginx role
 
 ```
@@ -167,23 +148,24 @@ ansible-galaxy install geerlingguy.apache
 mv geerlingguy.apache/ apache
 ```
 
-### Next was to configure the Nginx role  - nginx>default>main.yml
-### First i edited the inventory>uat.yml file
+### Next was to configure nginx/default/main.yml
+### First i edited the inventory/uat.yml file
 
 ```
 
 [nfs]
-172.31.29.13
+172.31.29.13 ansible_ssh_user='ec2-user'
 
 [webservers]
-172.31.26.192 
-172.31.26.64 
+172.31.26.192 ansible_ssh_user='ec2-user'
+172.31.26.64 ansible_ssh_user='ec2-user'
 
 [db]
-172.31.20.208
+172.31.20.208 ansible_ssh_user='ubuntu'
 
 [lb]
-172.31.30.113
+172.31.30.113 ansible_ssh_user='ubuntu'
+
 
 
 ```
@@ -213,7 +195,7 @@ Example extra http options, printed inside the main server http config:
 ```
 
 
-### In nginx > tasks > main.yml, add become:true for #Nginx setup
+### In nginx > tasks > main.yml, I set become:true for #Nginx setup
 
 ```
 # Nginx setup.
@@ -250,7 +232,7 @@ web2: 172.31.26.64
 
 ```
 
-In apache > tasks > setupredhat.yml  add become: yes
+In the apache role , I navigated to apache > tasks > setupredhat.yml  and set become: yes
 
 ```
 - name: Ensure Apache is installed on RHEL.
@@ -262,7 +244,7 @@ In apache > tasks > setupredhat.yml  add become: yes
 
 
 ```
-### This snippet also added to setupredhat.yml to deal with selinux
+### This snippet also added to setupredhat.yml to handle selinux
 
 ```
 - name: Set httpd_can_network_connect flag on and keep it persistent across reboots
@@ -274,12 +256,12 @@ In apache > tasks > setupredhat.yml  add become: yes
 ```
 
 
-### In apache>defaults>main.yml, I changed lb_name to loadbalancer_name
+### In apache > defaults > main.yml, I changed lb_name to loadbalancer_name and set the value as myapp1
 ```
 loadbalancer_name: "myapp1"
 ```
 
-### In nginx>tasks:setupredhat.yml I added the following
+### In nginx > tasks > setupredhat.yml I added the following snippet
 
 ```
 ---
@@ -300,7 +282,7 @@ loadbalancer_name: "myapp1"
     state: present
 
 ```
-### In Nginx > tasks main.yml i set host names
+### In Nginx > tasks > main.yml i set host names
 
 ```
 - name: set webservers host name in /etc/hosts
@@ -410,7 +392,7 @@ Update both assignment and site.yml files respectively
   when: load_balancer_is_required 
 ```
 
-### We post the snippet below into env-vars/uat.yml
+### We post the snippet below into env-vars > uat.yml
 ### This will be used to control the loadbalancers
 
 ```
@@ -425,3 +407,4 @@ load_balancer_is_required: true
 ansible-playbook -i /inventory/uat.yml /playbooks/site.yml
 
 ```
+
