@@ -239,8 +239,67 @@ Example extra http options, printed inside the main server http config:
 ```
 
 
+### Next I added the following to apache > defaults > main.yml
+
+```
+# Webservers
+loadbalancer_name: "myapp1"
+web1: 172.31.26.192
+web2: 172.31.26.64
+ 
+
+```
+
+In apache > tasks > setupredhat.yml  add become: yes
+
+```
+- name: Ensure Apache is installed on RHEL.
+  become: yes 
+  package:
+    name: "{{ apache_packages }}"
+    state: "{{ apache_packages_state }}"
+    enablerepo: "{{ apache_enablerepo | default(omit, true) }}"
 
 
+```
+### This snippet also added to setupredhat.yml to deal with selinux
+
+```
+- name: Set httpd_can_network_connect flag on and keep it persistent across reboots
+  ansible.posix.seboolean:
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+
+```
+
+
+### In apache>defaults>main.yml, I changed lb_name to loadbalancer_name
+```
+loadbalancer_name: "myapp1"
+```
+
+### In nginx>tasks:setupredhat.yml I added the following
+
+```
+---
+- name: Enable nginx repo.
+  become: yes
+  template:
+    src: nginx.repo.j2
+    dest: /etc/yum.repos.d/nginx.repo
+    owner: root
+    group: "{{ root_group }}"
+    mode: 0644
+  when: nginx_yum_repo_enabled | bool
+
+- name: Ensure nginx is installed.
+  become: yes
+  package:
+    name: "{{ nginx_package_name }}"
+    state: present
+
+```
 
 
 
