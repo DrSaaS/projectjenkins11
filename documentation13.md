@@ -300,7 +300,114 @@ loadbalancer_name: "myapp1"
     state: present
 
 ```
+### In Nginx > tasks main.yml i set host names
+
+```
+- name: set webservers host name in /etc/hosts
+  become: yes
+  blockinfile: 
+    path: /etc/hosts
+    block: |
+      {{ item.ip }} {{ item.name }}
+  loop:
+    - { name: web1, ip: 172.31.26.192 }
+    - { name: web2, ip: 172.31.26.64 }
+
+```
 
 
+### The hostname is referenced in nginx>defaults>main.yml
+```
+nginx_upstreams: 
+- name: myapp1
+  strategy: "ip_hash" # "least_conn", etc.
+  keepalive: 16 # optional
+  servers: {
+     "web1 weight=3",
+     "web2 weight=3",
+     "proxy_pass http://myapp1"
+   }
+```
+
+
+
+### I declared 2 variables enable_nginx_lb and enable_apache_lb in defaults/main.yml of Nginx and Apache roles respectively and set both to false.
+### I declared another variable in both roles load_balancer_is_required and set its value to false as well  
+
+```
+enable_nginx_lb: false
+
+load_balancer_is_required: false
+```
+
+
+```
+enable_apache_lb: false
+
+load_balancer_is_required: false
+```
+
+Update both assignment and site.yml files respectively
+
+
+
+### update static-assignments (db.yml)
+
+```
+---
+- hosts: db
+  roles:
+     - mysql
+  become: true
+
+```
+
+### update static-assignments (webservers.yml)
+
+```
+---
+- hosts: webservers
+  roles:
+     - webserver
+  become: true
+```
+
+
+### update static-assignments (lb.yml)
+
+```
+---
+- hosts: lb
+  roles:
+    - { role: nginx, when: enable_nginx_lb and load_balancer_is_required }
+    - { role: apache, when: enable_apache_lb and load_balancer_is_required }
+```
+
+### Then I updated playbooks/site.yml which is the entry point
+```
+---
+- name: Include dynamic variables 
+  hosts: all
+
+- name: import common file
+  import_playbook: ../static-assignments/common.yml
+  tags:
+    - always
+
+- name: include env-vars file
+  import_playbook: ../dynamic-assignments/env-vars.yml
+  tags:
+    - always
+
+- name: import database file
+  import_playbook: ../static-assignments/db.yml
+
+- name: import webservers file
+  import_playbook: ../static-assignments/webservers.yml
+
+- name: import Loadbalancers assignment
+  import_playbook: ../static-assignments/lb.yml
+  when: load_balancer_is_required 
+```
 
 
