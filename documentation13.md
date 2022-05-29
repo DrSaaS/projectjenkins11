@@ -1,24 +1,26 @@
-### INTRODUCING DYNAMIC ASSIGNMENT  
-In my github repository, I started a new branch named dynamic-assignments
+## ANSIBLE DYNAMIC ASSIGNMENTS (INCLUDE) AND COMMUNITY ROLES  
+---  
+
+- In my github repository, I started a new branch named dynamic-assignments
 
 ```
 git checkout -b dynamic-assignments
 ```
-### I created a new folder and it dynamic-assignments. Then inside this folder, I created a new file and name it env-vars.yml. We will instruct site.yml to include this playbook later. For now, let us keep building up the structure.
+- I created a new folder and named it dynamic-assignments. Inside this folder, I created a new file and name it env-vars.yml. I will instruct site.yml to include this playbook.
 
 ```
 mkdir dynamic-assignments && touch dynamic-assignments/env-vars.yml
 ```
 
-### Next is to configure ansible to use multiple environments. It is neccessary to create a folder to keep each environment's variable files.  
+- Next is to configure ansible to use multiple environments. It is neccessary to create a folder to keep each environment's variable files.  
 
-### I created a new folder env-vars and inside it, for each environment, new YAML files to set up variables
+- I created a new folder env-vars and inside it, for each environment, new YAML files to set up variables
 
 ```
 mkdir env-vars && touch env-vars/dev.yml env-vars/stage.yml env-vars/uat.yml env-vars/prod.yml
 ```  
 
-### I posted the following code snippet into env-vars.yaml
+- I posted the following code snippet into env-vars.yaml
 
 ```
 ---
@@ -40,7 +42,7 @@ mkdir env-vars && touch env-vars/dev.yml env-vars/stage.yml env-vars/uat.yml env
 
 ```  
 
-### Next, I updated site.yml with dynamic assignments as below  
+- Next, I updated site.yml with dynamic assignments as below  
 
 ```
 ---
@@ -59,9 +61,9 @@ mkdir env-vars && touch env-vars/dev.yml env-vars/stage.yml env-vars/uat.yml env
 ```  
 
 
-### Next I downloaded and installed a MySQL role developed by geerlingguy
+- Next I downloaded and installed a MySQL role developed by geerlingguy
 
-### On my ansible-jenkins server, I checked if git was installed 
+- On my ansible-jenkins server, I checked if git was installed 
 
 ```
 git --version
@@ -69,7 +71,7 @@ which git
 ```
 ![git installed check](./images/git-installed.JPG)  
 
-### Then I went to the ansible-config-artifact directory and ran the code below
+- Then I went to the ansible-config-artifact directory to initialise and create a branch
 
 ```
 git init
@@ -80,7 +82,8 @@ git switch roles-feature
 ```
 
 
-### Inside roles directory,  I created a new MySQL role with ansible-galaxy install geerlingguy.mysql and renamed the folder to mysql
+- Inside roles directory,  I created a new MySQL role with ansible-galaxy install geerlingguy.mysql and renamed the folder to mysql  
+
 ```
 ansible-galaxy install geerlingguy.mysql
 
@@ -93,27 +96,26 @@ git add .
 git commit -m "Commit new role files into GitHub"
 git push --set-upstream origin roles-feature
 ```
+- I was unable to push to git as username/password prompt failed. Password authentication disabled since 2021.
 
-### Unable to push to git as username/password prompt failed. Password authentication disabled since 2021.
-
-###  I created a personal access token in git and used it as the password with expiry set to 90 days
+- Solution:   I created a personal access token in git and used it as the password with expiry set to 90 days
 
 - settings 
-  -developer
+  - developer
     - Personal access tokens
-       -Generate new token
+       - Generate new token
           - I gave a descriptive name
           - set expiration to 90 days
           - selected the scope (repo, admin:repo_hook, delete_repo)  
 
 - I generated the token and used it as a password.
 - I was able to push successfully.
-
+```
 Username: drsaas
 Password: my_token
+```
 
-
-### I edited mysql > defaults > main.yml file
+- I edited mysql > defaults > main.yml file with the toolng database credentials
 ```
 # Databases.
 mysql_databases:
@@ -132,8 +134,9 @@ mysql_users:
 ```
 
 
-### Load Balancer Roles _ Next i created the Nginx role
-### Install Nginx role
+- Load Balancer Roles 
+- Next i created the Nginx role from geerlingguy
+
 
 ```
 ansible-galaxy install geerlingguy.nginx
@@ -141,15 +144,14 @@ ansible-galaxy install geerlingguy.nginx
 mv geerlingguy.nginx/ nginx
 ```
 
-
+- I created the apache role
 ```
 ansible-galaxy install geerlingguy.apache
 
 mv geerlingguy.apache/ apache
 ```
 
-### Next was to configure nginx/default/main.yml
-### First i edited the inventory/uat.yml file
+- Next was to configure the inventory/uat.yml file
 
 ```
 
@@ -170,7 +172,7 @@ mv geerlingguy.apache/ apache
 
 ```
 
-### I made changes to nginx > default > main.yml
+- I made changes to nginx > default > main.yml
 
 ```
 nginx_upstreams: 
@@ -195,7 +197,7 @@ Example extra http options, printed inside the main server http config:
 ```
 
 
-### In nginx > tasks > main.yml, I set become:true for #Nginx setup
+- In nginx > tasks > main.yml, I set become: true for #Nginx setup
 
 ```
 # Nginx setup.
@@ -221,18 +223,24 @@ Example extra http options, printed inside the main server http config:
 ```
 
 
-### Next I added the following to apache > defaults > main.yml
+- Next I added the following to apache > defaults > main.yml
 
 ```
-# Webservers
-loadbalancer_name: "myapp1"
+# Defaults for apache role
+
+enable_apache_lb: false
+load_balancer_is_required: false
+
+
+# DNS mapping for Webservers
+
 web1: 172.31.26.192
 web2: 172.31.26.64
  
 
 ```
 
-In the apache role , I navigated to apache > tasks > setupredhat.yml  and set become: yes
+- In the apache role , I navigated to apache > tasks > setupredhat.yml  and set become: yes
 
 ```
 - name: Ensure Apache is installed on RHEL.
@@ -244,7 +252,7 @@ In the apache role , I navigated to apache > tasks > setupredhat.yml  and set be
 
 
 ```
-### This snippet also added to setupredhat.yml to handle selinux
+- This snippet also added to setupredhat.yml to handle selinux
 
 ```
 - name: Set httpd_can_network_connect flag on and keep it persistent across reboots
@@ -255,14 +263,23 @@ In the apache role , I navigated to apache > tasks > setupredhat.yml  and set be
 
 ```
 
-
-### In apache > defaults > main.yml, I changed lb_name to loadbalancer_name and set the value as myapp1
+---
+- In apache > defaults > main.yml
+---
 ```
-loadbalancer_name: "myapp1"
+enable_apache_lb: false
+
+load_balancer_is_required: false
+
+# Webservers
+
+web1: 172.31.26.192
+web2: 172.31.26.64
+ 
 ```
-
-### In nginx > tasks > setupredhat.yml I added the following snippet
-
+---
+- In nginx > tasks > setupredhat.yml I added the following snippet
+---
 ```
 ---
 - name: Enable nginx repo.
@@ -282,40 +299,61 @@ loadbalancer_name: "myapp1"
     state: present
 
 ```
-### In Nginx > tasks > main.yml i set host names
+- In Nginx > tasks > main.yml 
 
 ```
-- name: set webservers host name in /etc/hosts
+---
+
+- name: Install nginx
   become: yes
-  blockinfile: 
-    path: /etc/hosts
-    block: |
-      {{ item.ip }} {{ item.name }}
-  loop:
-    - { name: web1, ip: 172.31.26.192 }
-    - { name: web2, ip: 172.31.26.64 }
+  apt:
+    name: nginx
+    state: present
+
+
+
+- name: start nginx
+  become: yes
+  service:
+    name: nginx
+    state: started
+
+- name: Insert configuration file in server block
+  become: yes
+  blockinfile:
+     path: /etc/nginx/nginx.conf
+     block: "{{ lookup('file', '../templates/nginx.conf' ) }}"
+     insertafter: "http {"
+
+
+- name: Comment out site-enabled
+  become: yes
+  replace:
+     path: /etc/nginx/nginx.conf
+     regexp: '(.*enabled.*)'
+     replace: '#\1'
+         
+  notify: Restart nginx service
+
 
 ```
 
-
-### The hostname is referenced in nginx>defaults>main.yml
+- The hostname is referenced in nginx>defaults>main.yml
 ```
-nginx_upstreams: 
-- name: myapp1
-  strategy: "ip_hash" # "least_conn", etc.
-  keepalive: 16 # optional
-  servers: {
-     "web1 weight=3",
-     "web2 weight=3",
-     "proxy_pass http://myapp1"
-   }
+enable_nginx_lb: false
+load_balancer_is_required: false
+
+# Webservers
+
+web1: 172.31.26.192
+web2: 172.31.26.64
 ```
 
 
-
-### I declared 2 variables enable_nginx_lb and enable_apache_lb in defaults/main.yml of Nginx and Apache roles respectively and set both to false.
-### I declared another variable in both roles load_balancer_is_required and set its value to false as well  
-
+---
+- I declared 2 variables enable_nginx_lb and enable_apache_lb in defaults/main.yml of Nginx and Apache roles respectively and set both to false.
+- I declared another variable in both roles load_balancer_is_required and set its value to false as well  
+---
 ```
 enable_nginx_lb: false
 
@@ -333,7 +371,7 @@ Update both assignment and site.yml files respectively
 
 
 
-### update static-assignments (db.yml)
+- I updated static-assignments (db.yml)
 
 ```
 ---
@@ -344,7 +382,7 @@ Update both assignment and site.yml files respectively
 
 ```
 
-### update static-assignments (webservers.yml)
+- I updated static-assignments (webservers.yml)
 
 ```
 ---
@@ -355,7 +393,7 @@ Update both assignment and site.yml files respectively
 ```
 
 
-### update static-assignments (lb.yml)
+- I updated static-assignments (lb.yml)
 
 ```
 ---
@@ -365,7 +403,7 @@ Update both assignment and site.yml files respectively
     - { role: apache, when: enable_apache_lb and load_balancer_is_required }
 ```
 
-### Then I updated playbooks/site.yml which is the entry point
+-  Then I updated playbooks/site.yml which is the entry point
 ```
 ---
 - name: Include dynamic variables 
@@ -392,8 +430,8 @@ Update both assignment and site.yml files respectively
   when: load_balancer_is_required 
 ```
 
-### We post the snippet below into env-vars > uat.yml
-### This will be used to control the loadbalancers
+- I updated env-vars > uat.yml
+- This will be used to control the loadbalancers
 
 ```
 enable_nginx_lb: true
@@ -401,10 +439,31 @@ load_balancer_is_required: true
 
 ```
 
-
-### Next task is to run the playbook
+---
+- Next task is to run the playbook with preferred load balancer as nginx
+---
 ```
 ansible-playbook -i /inventory/uat.yml /playbooks/site.yml
 
 ```
+---
+- Webservers are up and running
+---
+![](./images/12-3.JPG)
 
+![](./images/playrecap.JPG)
+
+![](./images/12-1.JPG)
+
+![](./images/12-2.JPG)
+
+---
+- Loadbalancer is functional
+---
+
+![](./images/loadbalancer.JPG)
+
+---
+End of Project
+
+---
